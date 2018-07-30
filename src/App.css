@@ -15,7 +15,7 @@ body {
     background: #e2e1e0;
     text-align: center;
   }
-  
+
   .card {
     background: #fff;
     border-radius: 2px;
@@ -78,7 +78,7 @@ body {
       padding: 0 30px;
       margin-top: 20px;
       width: 100%;
-      height: 220px;
+      height: 100px;
       display: flex;
       flex-direction: row;
       justify-content: flex-start;

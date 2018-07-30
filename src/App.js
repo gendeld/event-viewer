@@ -5,39 +5,47 @@ import EventView from './eventView.js';
 
 class App extends Component {
     constructor(props) {
-        super(props);
-        this.state = {
-            searchValue: '',
-            events: []
-        };
+      super(props);
+      this.state = {
+          searchValue: '',
+          events: []
+      };
+      this.eventQueue = [];
     }
-    onMessage(e) {
-        console.log('Received:', e);
-        let event = JSON.parse(e.data);
+    addEvent() {
+      if(this.eventQueue.length>0) {
         let events = this.state.events.slice();
+        let event = this.eventQueue.shift();
         events.unshift(event);
         this.setState({ events });
+      }
+    }
+    onMessage(e) {
+      console.log('Received:', e);
+      let event = JSON.parse(e.data);
+      this.eventQueue.unshift(event);
     }
     onConnect(e) {
-        console.log('Connected!', e);
-        this.ws.send('Hello World!');
+      console.log('Connected!', e);
+      this.ws.send('Hello World!');
+      setInterval(this.addEvent.bind(this),500);
     }
     componentDidMount() {
-        this.ws = new Sockette('ws://events-stream.herokuapp.com/', {
-            timeout: 5e3,
-            maxAttempts: 10,
-            onopen: this.onConnect.bind(this),
-            onmessage: this.onMessage.bind(this),
-            onreconnect: e => console.log('Reconnecting...', e),
-            onmaximum: e => console.log('Stop Attempting!', e),
-            onclose: e => console.log('Closed!', e),
-            onerror: e => console.log('Error:', e)
-        });
+      this.ws = new Sockette('ws://events-stream.herokuapp.com/', {
+        timeout: 5e3,
+        maxAttempts: 10,
+        onopen: this.onConnect.bind(this),
+        onmessage: this.onMessage.bind(this),
+        onreconnect: e => console.log('Reconnecting...', e),
+        onmaximum: e => console.log('Stop Attempting!', e),
+        onclose: e => console.log('Closed!', e),
+        onerror: e => console.log('Error:', e)
+      });
     }
     handleChange(event) {
         this.setState({searchValue: event.target.value});
     }
-    
+
     filterEvents(events, searchValue) {
         console.warn(`searchValue: ${searchValue}`);
         let filteredEvents = events.slice();
@@ -46,7 +54,7 @@ class App extends Component {
             let i = 0;
             let foundLogo = false;
             while(!foundLogo&&i<eventKeys.length) {
-                if(eventKeys[i]=="logo") {
+                if(eventKeys[i]==="logo") {
                     foundLogo=true;
                     eventKeys.splice(i,1);
                 }
@@ -66,13 +74,13 @@ class App extends Component {
     }
   render() {
     const { events, searchValue } = this.state;
-    
+
     return (
       <div className="App">
         <div className="card">
             <div className="events-container">
                 <div className="search">
-                    <img src="./images/search.svg" />
+                    <img src="./images/search.svg" alt="Search" />
                     <input type="text"
                         value={searchValue}
                         onChange={this.handleChange.bind(this)}
@@ -82,7 +90,7 @@ class App extends Component {
                     {
                         this.filterEvents(events, searchValue).map((event) => {
                             return (
-                                <EventView highlight={searchValue} event={event} />
+                                <EventView highlight={searchValue} event={event} searchValue={searchValue} />
                             )
                         })
                     }
