@@ -1,0 +1,33 @@
+.event-container {
+    width: 100%;
+    height: 80px;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    color: #565656;
+}
+
+.event {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-bottom: solid 1px rgba(0,0,0,.2);
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.event-name {
+    text-align: right;
+    width: 15%;
+}
+
+.event-logo {
+    width: 40px;
+    height: 40px;
+}
+
+.event-value {
+    font-weight: 700;
+}
